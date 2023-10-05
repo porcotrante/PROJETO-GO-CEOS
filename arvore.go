@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Record struct {
 	ID     int
 	Parent int
@@ -16,24 +14,58 @@ type Node struct {
 
 //função que remove um elemento de um vetor desordenadamente
 func remover(s []Record, i int) []Record {
-    s[i] = s[len(s)-1]
-    return s[:len(s)-1]
+    return append(s[:i], s[i+1:]...)
 }
 
 //função que percorre a árvore e retorna o nódulo que tem o ID pai
-func percorrer(raiz *Node, pai int) *Node {
-	if raiz.ID == pai {
-		return raiz
-	}
+func adicionar(raiz *Node, pai int, filho *Node) {
+    if raiz.ID == pai {
+        raiz.Children = append(raiz.Children, filho) // Adicione o novo nó como filho
+    }
 
-	for i := 0; i < len(raiz.Children); i++ {
-		aux := percorrer(raiz.Children[i], pai)
-		if aux != nil {
-			return aux
+    // Percorra recursivamente os filhos
+    for i := range raiz.Children {
+		adicionar(raiz.Children[i], pai, filho)
+    }
+
+
+}
+
+func partition(arr []Record, low, high int, modo int) ([]Record, int) {
+	pivot := arr[high]
+	i := low
+	if modo == 0 {
+		for j := low; j < high; j++ {
+			if arr[j].Parent < pivot.Parent {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+			}
 		}
 	}
+	if modo == 1 {
+		for j := low; j < high; j++ {
+			if arr[j].ID < pivot.ID {
+				arr[i], arr[j] = arr[j], arr[i]
+				i++
+			}
+		}
+	}
+	arr[i], arr[high] = arr[high], arr[i]
+	return arr, i
+}
 
-	return nil
+func quickSort(arr []Record, low, high int, modo int) []Record {
+	if low < high {
+		var p int
+		arr, p = partition(arr, low, high, modo)
+		arr = quickSort(arr, low, p-1, modo)
+		arr = quickSort(arr, p+1, high, modo)
+	}
+	return arr
+}
+
+func quickSortStart(arr []Record, modo int) []Record {
+	return quickSort(arr, 0, len(arr)-1, modo)
 }
 
 
@@ -50,9 +82,25 @@ func Build(records []Record) (*Node, error) {
 	for i := 0; i < len(records); i++ {
 		if records[i].ID == 0 {
 			raiz.ID = 0
-			remover(records,i)
+			records=remover(records,i)
 		}
 	}
+
+	//ordenando os recordes em ordem crescente pelo pai
+	records=quickSortStart(records,0)
+
+	records=quickSortStart(records,1)
+
+	for i := 0; i < len(records); i++ {	
+		aux2 := &Node{ID: records[i].ID, Children: []*Node{}}
+
+		adicionar(raiz,records[i].Parent,aux2)
+
+		}
+
+
+	return raiz, nil
+}
 
 	//falta utilizar a função que acha e retorna o pai (implementada acima) para construir a árvore
 
