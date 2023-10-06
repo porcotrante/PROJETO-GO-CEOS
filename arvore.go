@@ -1,4 +1,4 @@
-package main
+package tree
 import "fmt"
 
 const raizID = 0
@@ -80,18 +80,25 @@ func Build(records []Record) (*Node, error) {
 	if len(records) == 0 {
 		return nil, nil
 	} 
-
-    for i := range records{
-        if i.ID < raizID || i.ID >= len(records){
+	fila := make([]int, len(records))
+    
+    for j := range records{
+        if records[j].ID < raizID || records[j].ID >= len(records){
             return nil, fmt.Errorf("Nó com ID menor que a raiz e maior que o máximo de nós")
         }
-        if i.ID == raizID && i.Parent != nil{
-            return nil, fmtErrorf("Raiz com pai")
+    	if (records[j].ID < records[j].Parent) || (records[j].ID == raizID && records[j].Parent != raizID){
+            return nil, fmt.Errorf("Nós que não tem possibilidade de existirem")
         }
-    	if i.ID < i.Parent{
-            return nil, fmtErrorf("Raiz com id menor que o seu pai")
+    	if (records[j].ID != raizID && records[j].ID == records[j].Parent){
+            return nil, fmt.Errorf("Nó que é filho de si mesmo")
         }
+    	fila[records[j].ID] = j
     }
+	for j := range fila{
+        if records[fila[j]].ID != j{
+            return nil, fmt.Errorf("Nós não continuos")
+        }
+    } 
 
 	//Ao enncontrar o elemento com ID = 0, ele atribui isso à raiz e remove da array
 	for i := 0; i < len(records); i++ {
@@ -120,6 +127,6 @@ func Build(records []Record) (*Node, error) {
 
 	//falta utilizar a função que acha e retorna o pai (implementada acima) para construir a árvore
 
-}
+
 
 //perguntar sobre como percorrer árvore em go para o LG
