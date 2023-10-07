@@ -22,14 +22,26 @@ func remover(s []Record, i int) []Record {
 
 //função que percorre a árvore e retorna o nódulo que tem o ID pai
 func adicionar(raiz *Node, pai int, filho *Node) {
+	var j int
+	if raiz == nil {
+		*raiz = *filho
+		return 		
+	} 
+
+
     if raiz.ID == pai {
         raiz.Children = append(raiz.Children, filho) // Adicione o novo nó como filho
     }
 
     // Percorra recursivamente os filhos
     for i := range raiz.Children {
-		adicionar(raiz.Children[i], pai, filho)
+		j = i
+		adicionar(raiz.Children[i], pai, filho)		
     }
+
+	if j == len(raiz.Children) -1 && raiz.ID != pai {
+		return errors.New("O pai não está presente na árvore")
+	}
 
 
 }
