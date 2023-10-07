@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Formulario</title>
+</head>
+<body>
+    <div class="caixaMaior">
+        <h1>Adicionar na Árvore</h1>
+        <form action="#">
+            <div class="caixaMenor">
+                <label for="ID">Digite o ID do componente: </label>
+                <input type="number" id="ID" name="ID" min="0" placeholder="ID" required>
+            </div>
+            <div class="caixaMenor">
+                <label for="Pai">Digite o ID do pai do componente: </label>
+                    <input type="number" id="pai" name="pai" min="0" placeholder="ID Pai" required>
+            </div> 
+            <div> 
+                <button type="submit" class='adicionar' value="Adicionar">Adicionar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
